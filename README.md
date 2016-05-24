@@ -1,6 +1,7 @@
 ## sendgrid-mail
-send emails from the command line via Sendgrid
-install via `pip install sendgrid-mail`
+Send emails from the command line via Sendgrid.
+
+Install via `pip install sendgrid-mail`
 
 ## usage
 ```sh

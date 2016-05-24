@@ -11,7 +11,7 @@ from os import environ
 import sendgrid
 
 parser = argparse.ArgumentParser(prog='sendgrid-mail',
-                                 description='Send a mail via sendgrid.')
+                                 description='Send an email via Sendgrid.')
 
 env_username = environ.get('SENDGRID_USERNAME')
 env_password = environ.get('SENDGRID_PASSWORD')

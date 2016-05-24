@@ -11,7 +11,7 @@ setup(
     author_email='diwu1989@users.noreply.github.com',
     license='MIT',
     classifiers=[
-        'Development Status :: 3 - Beta',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2',

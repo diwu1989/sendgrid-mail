@@ -2,7 +2,9 @@
 from __future__ import print_function
 
 import argparse
+import getpass
 import json
+import socket
 import sys
 from os import environ
 
@@ -23,7 +25,8 @@ parser.add_argument('--password', dest='password', default=env_password,
 
 parser.add_argument('--to', action='append', help='to email address',
                     required=True)
-parser.add_argument('--from', help='from email address', required=True)
+parser.add_argument('--from', help='from email address',
+                    default='%s@%s' % (getpass.getuser(), socket.getfqdn()))
 parser.add_argument('--cc', action='append', help='cc email address',
                     default=[])
 parser.add_argument('--bcc', action='append', help='bcc email address',

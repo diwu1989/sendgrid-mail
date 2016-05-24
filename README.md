@@ -28,20 +28,20 @@ optional arguments:
   --html                send text as html
 ```
 
-###Utilizing credentials from the environment
+##### utilizing credentials from the environment
 ```sh
 export SENDGRID_USERNAME=...
 export SENDGRID_PASSWORD=...
 echo "email content" | sendgrid-mail --to hello@world.com --subject test
 ```
 
-###Sending text email
+##### sending text email
 ```sh
 echo "Hello World" > myfile
 sendgrid-mail --to hello@world.com --subject test myfile
 ```
 
-###Sending attachment with html content
+##### sending attachment with html content
 ```sh
 echo "Attachment 1" > attachment1
 echo "<b>hello world</b>" > content

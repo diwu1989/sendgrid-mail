@@ -1,42 +1,54 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 import argparse
+import json
 import sys
 from os import environ
-from StringIO import StringIO
 
 import sendgrid
 
 parser = argparse.ArgumentParser(prog='sendgrid-mail',
                                  description='Send a mail via sendgrid.')
-parser.add_argument('--username', dest='username', help='sendgrid username',
-                    default=environ.get('SENDGRID_USERNAME'))
-parser.add_argument('--password', dest='password', help='sendgrid password',
-                    default=environ.get('SENDGRID_PASSWORD'))
 
-parser.add_argument('--to', action='append', help='to email address')
-parser.add_argument('--from', dest='from_email', help='from email address')
+env_username = environ.get('SENDGRID_USERNAME')
+env_password = environ.get('SENDGRID_PASSWORD')
+
+parser.add_argument('--username', dest='username', default=env_username,
+                    help='sendgrid username, defaults to $SENDGRID_USERNAME',
+                    required=not bool(env_username))
+parser.add_argument('--password', dest='password', default=env_password,
+                    help='sendgrid password, defaults to $SENDGRID_PASSWORD',
+                    required=not bool(env_password))
+
+parser.add_argument('--to', action='append', help='to email address',
+                    required=True)
+parser.add_argument('--from', help='from email address', required=True)
 parser.add_argument('--cc', action='append', help='cc email address',
                     default=[])
 parser.add_argument('--bcc', action='append', help='bcc email address',
                     default=[])
-parser.add_argument('--subject', help='email subject', default='')
+parser.add_argument('--subject', help='email subject', required=True)
 parser.add_argument('--attachment', action='append', help='attachment',
-                    type=argparse.FileType('r'))
-parser.add_argument('body', nargs='?', default=sys.stdin)
+                    type=argparse.FileType('r'), default=[])
+parser.add_argument('text', type=argparse.FileType('r'), nargs='?',
+                    default=sys.stdin)
 
 args = parser.parse_args()
 
-if isinstance(args.body, basestring):
-    try:
-        args.body = open(args.body, 'r')
-    except IOError:
-        args.body = StringIO(args.body)
+if not args.username:
+    print('username is required')
+    sys.exit(1)
+
+if not args.password:
+    print('password is required')
+    sys.exit(1)
 
 client = sendgrid.SendGridClient(args.username, args.password)
 message = sendgrid.Mail()
-message.set_from(args.from_email)
+message.set_from(getattr(args, 'from'))
 message.set_subject(args.subject)
-message.set_text(args.body.read())
+message.set_text(args.text.read())
 
 for to in args.to:
     message.add_to(to)
@@ -50,4 +62,10 @@ for bcc in args.bcc:
 for attachment in args.attachment:
     message.add_attachment(attachment.name, attachment)
 
-client.send(message)
+status, msg = client.send(message)
+msg = json.loads(msg)
+
+if status != 200:
+    for error in msg.get('errors', []):
+        print(error)
+    sys.exit(1)

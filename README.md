@@ -1,7 +1,7 @@
-# sendgrid-mail
+## sendgrid-mail
 Send emails from the command line via Sendgrid.
 
-# usage
+## usage
 ```sh
 » ./sendgrid-mail --help
 usage: sendgrid-mail [-h] [--username USERNAME] [--password PASSWORD] --to TO
@@ -28,22 +28,22 @@ optional arguments:
   --html                send text as html
 ```
 
-Utilizing credentials from the environment
+###Utilizing credentials from the environment
 ```sh
 export SENDGRID_USERNAME=...
 export SENDGRID_PASSWORD=...
 echo "email content" | sendgrid-mail --to hello@world.com --subject test
 ```
 
-Sending text email
+###Sending text email
 ```sh
 echo "Hello World" > myfile
 sendgrid-mail --to hello@world.com --subject test myfile
 ```
 
-Sending attachment with html content
+###Sending attachment with html content
 ```sh
 echo "Attachment 1" > attachment1
 echo "<b>hello world</b>" > content
-sendgrid-mail --to hello@world.com --subject test --attachment attachment1 content
+sendgrid-mail --to hello@world.com --subject test --attachment attachment1 content --html
 ```

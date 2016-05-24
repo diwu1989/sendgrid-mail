@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 
 import argparse
@@ -25,7 +26,7 @@ parser.add_argument('--password', dest='password', default=env_password,
 
 parser.add_argument('--to', action='append', help='to email address',
                     required=True)
-parser.add_argument('--from', help='from email address',
+parser.add_argument('--from', help='from email address, defaults to local',
                     default='%s@%s' % (getpass.getuser(), socket.getfqdn()))
 parser.add_argument('--cc', action='append', help='cc email address',
                     default=[])
@@ -34,6 +35,8 @@ parser.add_argument('--bcc', action='append', help='bcc email address',
 parser.add_argument('--subject', help='email subject', required=True)
 parser.add_argument('--attachment', action='append', help='attachment',
                     type=argparse.FileType('r'), default=[])
+parser.add_argument('--html', help='send text as html', action='store_true',
+                    default=False)
 parser.add_argument('text', type=argparse.FileType('r'), nargs='?',
                     default=sys.stdin)
 
@@ -51,7 +54,10 @@ client = sendgrid.SendGridClient(args.username, args.password)
 message = sendgrid.Mail()
 message.set_from(getattr(args, 'from'))
 message.set_subject(args.subject)
-message.set_text(args.text.read())
+if args.html:
+    message.set_html(args.text.read())
+else:
+    message.set_text(args.text.read())
 
 for to in args.to:
     message.add_to(to)
